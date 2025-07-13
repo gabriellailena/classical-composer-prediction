@@ -47,7 +47,9 @@ def load_musicnet_data(*args, **kwargs) -> pd.DataFrame:
 @test
 def test_output(output, *args) -> None:
     """
-    Template code for testing the output of the block.
+    Test the output of the MusicNet data loader.
     """
     assert isinstance(output, pd.DataFrame), 'Output should be a pandas DataFrame'
     assert output is not None, 'The output is undefined'
+    assert 'split' in output.columns, 'Output DataFrame should contain a "split" column'
+    assert output['split'].notnull().all(), 'All entries in the "split" column should be defined'
