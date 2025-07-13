@@ -1,5 +1,11 @@
-.PHONY: setup-venv remove-venv
+.PHONY: setup-venv remove-venv setup download-data run-servers stop-servers
 VENV=.venv
+ifneq (,$(wildcard .env))
+	include .env
+	export
+endif
+MLFLOW_BACKEND_URI ?= sqlite:///mlflow.db
+MAGE_PROJECT_NAME=classical-composer-prediction
 
 setup-venv:
 	@echo "Setting up virtual environment..."
@@ -10,7 +16,24 @@ remove-venv:
 	rm -rf $(VENV)
 	@echo "Virtual environment removed."
 
+# Fresh setup which removes the existing virtual environment and sets it up again
+setup: remove-venv setup-venv
+	@echo "Setting up fresh environment..."
+
 # Downloads the required MusicNet dataset
 download-data:
 	@echo "Downloading MusicNet data..."
 	./scripts/download_data.sh
+
+# Runs the Mage AI and MLFlow servers
+run-servers:
+	@echo "Starting Mage AI and MLFlow servers..."
+	. $(VENV)/bin/activate && \
+	mlflow ui --backend-store-uri $(MLFLOW_BACKEND_URI) --default-artifact-root $(PWD)/artifacts & \
+	mage start $(MAGE_PROJECT_NAME)
+
+# Stops the Mage AI and MLFlow servers
+stop-servers:
+	@echo "Stopping Mage AI and MLFlow servers..."
+	@kill $(shell lsof -t -i:6789) 2>/dev/null || true  # Mage AI default port
+	@kill $(shell lsof -t -i:5000) 2>/dev/null || true  # MLFlow default port
