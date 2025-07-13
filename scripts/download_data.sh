@@ -7,7 +7,7 @@
 set -e  # Exit on any error
 
 # Configuration
-DATA_DIR="../data/raw"
+DATA_DIR="data/raw"
 MUSICNET_URL="https://zenodo.org/records/5120004/files/musicnet.tar.gz"
 MUSICNET_METADATA_URL="https://zenodo.org/records/5120004/files/musicnet_metadata.csv"
 
