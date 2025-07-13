@@ -1,13 +1,14 @@
 from pandas import DataFrame
 import math
 
-if 'transformer' not in globals():
+if "transformer" not in globals():
     from mage_ai.data_preparation.decorators import transformer
-if 'test' not in globals():
+if "test" not in globals():
     from mage_ai.data_preparation.decorators import test
 
+
 def select_number_columns(df: DataFrame) -> DataFrame:
-    return df[['Age', 'Fare', 'Parch', 'Pclass', 'SibSp', 'Survived']]
+    return df[["Age", "Fare", "Parch", "Pclass", "SibSp", "Survived"]]
 
 
 def fill_missing_values_with_median(df: DataFrame) -> DataFrame:
@@ -42,4 +43,4 @@ def test_output(df) -> None:
     """
     Template code for testing the output of the block.
     """
-    assert df is not None, 'The output is undefined'
+    assert df is not None, "The output is undefined"
