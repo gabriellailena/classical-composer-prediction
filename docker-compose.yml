@@ -1,0 +1,37 @@
+services:
+  mage:
+    build: 
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "6789:6789"
+    volumes:
+      - ./classical-composer-prediction:/home/src/classical-composer-prediction
+    environment:
+      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
+      - MLFLOW_EXPERIMENT_NAME=${MLFLOW_EXPERIMENT_NAME}
+      - MAGE_PROJECT_NAME=classical-composer-prediction
+    depends_on:
+      - mlflow
+    networks:
+      - mage-mlflow-network
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlruns
+      - ./mlflow-artifacts:/mlflow-artifacts
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri ${MLFLOW_BACKEND_URI}
+      --default-artifact-root file:///mlflow-artifacts
+    networks:
+      - mage-mlflow-network
+
+networks:
+  mage-mlflow-network:
+    driver: bridge

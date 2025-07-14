@@ -1,4 +1,5 @@
-.PHONY: setup-venv remove-venv setup download-data run-servers stop-servers
+.PHONY: setup-venv remove-venv setup download-data run stop run-servers stop-servers lint
+
 VENV=.venv
 ifneq (,$(wildcard .env))
 	include .env
@@ -25,6 +26,16 @@ download-data:
 	@echo "Downloading MusicNet data..."
 	./scripts/download_data.sh
 
+# Start Docker containers for Mage AI and MLFlow
+up:
+	@echo "Starting Docker containers for Mage AI and MLFlow..."
+	docker compose up
+
+# Stops Docker containers for Mage AI and MLFlow
+down:
+	@echo "Stopping Docker containers for Mage AI and MLFlow..."
+	docker compose down
+
 # Runs the Mage AI and MLFlow servers
 run-servers:
 	@echo "Starting Mage AI and MLFlow servers..."
@@ -43,3 +54,4 @@ lint:
 	@echo "Running Ruff linter..."
 	@. $(VENV)/bin/activate && ruff check --fix .
 	@. $(VENV)/bin/activate && ruff format .
+
