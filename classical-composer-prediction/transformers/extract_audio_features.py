@@ -17,7 +17,9 @@ if "test" not in globals():
 load_dotenv()
 
 mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", None))
-mlflow.set_experiment(os.getenv("MLFLOW_EXPERIMENT_NAME", None))
+mlflow.set_experiment(
+    os.getenv("MLFLOW_EXPERIMENT_NAME", None)
+)
 
 
 def extract_features(
@@ -204,10 +206,6 @@ def extract_audio_features(df: pd.DataFrame) -> pd.DataFrame:
     features = extract_features_batch(df)
     train_df = features.loc[features["split"] == "train"]
     test_df = features.loc[features["split"] == "test"]
-
-    # Drop the non-feature columns
-    train_df = train_df.drop("split")
-    test_df = test_df.drop("split")
 
     return train_df, test_df
 
