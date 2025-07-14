@@ -7,10 +7,9 @@ services:
       - "6789:6789"
     volumes:
       - ./classical-composer-prediction:/home/src/classical-composer-prediction
-    environment:
-      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
-      - MLFLOW_EXPERIMENT_NAME=${MLFLOW_EXPERIMENT_NAME}
-      - MAGE_PROJECT_NAME=classical-composer-prediction
+      - ./data:/home/src/data
+    env_file:
+      - .env
     depends_on:
       - mlflow
     networks:

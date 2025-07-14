@@ -5,6 +5,7 @@ WORKDIR /home/src
 # Copy the entire project directory
 COPY classical-composer-prediction/ ./classical-composer-prediction/
 COPY requirements.txt .
+COPY .env .
 
 # Install dependencies
 RUN pip install -r requirements.txt
