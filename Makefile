@@ -6,7 +6,7 @@ ifneq (,$(wildcard .env))
 	export
 endif
 MLFLOW_BACKEND_URI ?= sqlite:///mlflow.db
-MAGE_PROJECT_NAME=classical-composer-prediction
+MAGE_PROJECT_NAME ?= classical-composer-prediction
 
 setup-venv:
 	@echo "Setting up virtual environment..."
