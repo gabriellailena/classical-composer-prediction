@@ -37,3 +37,9 @@ stop-servers:
 	@echo "Stopping Mage AI and MLFlow servers..."
 	@kill $(shell lsof -t -i:6789) 2>/dev/null || true  # Mage AI default port
 	@kill $(shell lsof -t -i:5000) 2>/dev/null || true  # MLFlow default port
+
+# Runs Ruff linter to check code style and formatting
+lint:
+	@echo "Running Ruff linter..."
+	@. $(VENV)/bin/activate && ruff check --fix .
+	@. $(VENV)/bin/activate && ruff format .
