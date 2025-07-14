@@ -1,7 +1,9 @@
-pandas
-numpy
-scikit-learn
+boto3
 librosa
 mage-ai
 mlflow
+numpy
+pandas
+python-dotenv
 ruff
+scikit-learn
