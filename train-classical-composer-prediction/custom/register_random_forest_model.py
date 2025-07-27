@@ -18,7 +18,7 @@ mlflow.set_experiment(
 @custom
 def register_random_forest_model(*args, **kwargs):
     """
-    Finds the run with best test score and registers it.
+    Finds the run with best test score and registers it on MLFlow Model Registry.
     """
     experiment = mlflow.get_experiment_by_name(os.getenv("MLFLOW_EXPERIMENT_NAME", None))
     best_run = mlflow.search_runs(
