@@ -1,0 +1,14 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: 2025-07-27 11:57:50.856252
+  name: train-random-forest
+  pipeline_uuid: train_classical_composer_prediction
+  schedule_interval: null
+  schedule_type: api
+  settings: null
+  sla: null
+  start_time: 2025-07-27 11:56:00
+  status: active
+  token: 1cef9c9dd77a49acbcc2185923b2b54c
+  variables: {}
