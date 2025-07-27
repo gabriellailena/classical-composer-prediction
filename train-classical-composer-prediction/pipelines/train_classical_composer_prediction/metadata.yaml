@@ -34,7 +34,7 @@ blocks:
   upstream_blocks:
   - load_musicnet_data
   uuid: extract_audio_features
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   color: teal
   configuration:
     file_source:
@@ -47,13 +47,13 @@ blocks:
   language: python
   name: train_random_forest_clf
   retry_config: null
-  status: executed
+  status: failed
   timeout: null
   type: custom
   upstream_blocks:
   - extract_audio_features
   uuid: train_random_forest_clf
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   color: yellow
   configuration:
     file_path: custom/register_random_forest_model.py
@@ -66,7 +66,7 @@ blocks:
   language: python
   name: register_random_forest_model
   retry_config: null
-  status: failed
+  status: updated
   timeout: null
   type: custom
   upstream_blocks:

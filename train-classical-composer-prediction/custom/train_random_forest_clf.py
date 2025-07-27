@@ -149,7 +149,7 @@ def train_random_forest_clf(*args, **kwargs) -> dict:
         # Log the best model
         mlflow.sklearn.log_model(
             best_model, 
-            "best_random_forest_model",
+            "models",
             signature=mlflow.models.infer_signature(X_train, y_train)
         )
 
