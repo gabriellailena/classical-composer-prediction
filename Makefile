@@ -6,7 +6,7 @@ ifneq (,$(wildcard .env))
 	export
 endif
 MLFLOW_BACKEND_URI ?= sqlite:///mlflow.db
-MAGE_PROJECT_NAME ?= classical-composer-prediction
+MAGE_PROJECT_NAME ?= train-classical-composer-prediction
 
 setup-venv:
 	@echo "Setting up virtual environment..."
@@ -26,28 +26,36 @@ download-data:
 	@echo "Downloading MusicNet data..."
 	./scripts/download_data.sh
 
-# Start Docker containers for Mage AI and MLFlow
+# Start Docker containers for all services
+# This includes Mage AI, MLFlow, and the API service
 up:
-	@echo "Starting Docker containers for Mage AI and MLFlow..."
+	@echo "Starting Docker containers for all services..."
 	docker compose up
 
-# Stops Docker containers for Mage AI and MLFlow
+# Stops Docker containers for all services
 down:
-	@echo "Stopping Docker containers for Mage AI and MLFlow..."
+	@echo "Stopping Docker containers for all services..."
 	docker compose down
 
-# Runs the Mage AI and MLFlow servers
+# Runs all servers
 run-servers:
-	@echo "Starting Mage AI and MLFlow servers..."
+	@echo "Starting all servers..."
 	. $(VENV)/bin/activate && \
 	mlflow ui --backend-store-uri $(MLFLOW_BACKEND_URI) --default-artifact-root $(PWD)/artifacts & \
-	mage start $(MAGE_PROJECT_NAME)
+	mage start $(MAGE_PROJECT_NAME) & \
+	python app.py
 
-# Stops the Mage AI and MLFlow servers
+# Stops all servers
 stop-servers:
-	@echo "Stopping Mage AI and MLFlow servers..."
+	@echo "Stopping all servers..."
 	@kill $(shell lsof -t -i:6789) 2>/dev/null || true  # Mage AI default port
 	@kill $(shell lsof -t -i:5000) 2>/dev/null || true  # MLFlow default port
+	@kill $(shell lsof -t -i:8000) 2>/dev/null || true  # API default port
+
+# Deploys the Flask App with gunicorn
+deploy:
+	@echo "Deploying Flask App..."
+	. $(VENV)/bin/activate && gunicorn --workers=2 --bind=0.0.0.0:8000 --reload app:app
 
 # Runs Ruff linter to check code style and formatting
 lint:
