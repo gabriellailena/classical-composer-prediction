@@ -6,7 +6,7 @@ numpy
 pandas
 python-dotenv
 ruff
-scikit-learn
+scikit-learn==1.7.0
 Flask
 Jinja2
 gunicorn

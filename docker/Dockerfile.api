@@ -1,0 +1,23 @@
+# Use Python 3.12 slim image as base
+FROM python:3.12-slim
+
+# Set working directory in container
+WORKDIR /app
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Install Python dependencies
+COPY requirements.api.txt .
+RUN pip install --no-cache-dir -r requirements.api.txt
+
+# Copy application code
+COPY app.py .
+COPY .env .
+
+# Expose port
+EXPOSE 8000
+
+# Run the application with gunicorn
+CMD ["gunicorn", "--bind=0.0.0.0:8000", "app:app", "--workers=2"]

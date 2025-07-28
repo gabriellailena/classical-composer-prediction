@@ -2,18 +2,19 @@ services:
   mage:
     build: 
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.mage
     ports:
       - "6789:6789"
     volumes:
-      - ./classical-composer-prediction:/home/src/classical-composer-prediction
+      - ./train-classical-composer-prediction:/home/src/train-classical-composer-prediction
       - ./data:/home/src/data
+      - ./mlflow-artifacts:/mlflow-artifacts
     env_file:
       - .env
     depends_on:
       - mlflow
     networks:
-      - mage-mlflow-network
+      - shared-network
 
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
@@ -29,8 +30,23 @@ services:
       --backend-store-uri ${MLFLOW_BACKEND_URI}
       --default-artifact-root file:///mlflow-artifacts
     networks:
-      - mage-mlflow-network
+      - shared-network
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./mlruns:/mlruns
+      - ./mlflow-artifacts:/mlflow-artifacts
+    depends_on:
+      - mage
+      - mlflow
+    networks:
+      - shared-network
 
 networks:
-  mage-mlflow-network:
+  shared-network:
     driver: bridge

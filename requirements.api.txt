@@ -4,4 +4,4 @@ python-dotenv
 ruff
 mlflow
 Flask
-
+scikit-learn==1.7.0

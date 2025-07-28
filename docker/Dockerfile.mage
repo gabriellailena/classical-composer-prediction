@@ -4,15 +4,15 @@ WORKDIR /home/src
 
 # Copy the entire project directory
 COPY classical-composer-prediction/ ./classical-composer-prediction/
-COPY requirements.txt .
+COPY requirements.mage.txt .
 COPY .env .
 
 # Install dependencies
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.mage.txt
 
 EXPOSE 6789
 
 # Set the project name
-ENV MAGE_PROJECT_NAME=classical-composer-prediction
+ENV MAGE_PROJECT_NAME=train-classical-composer-prediction
 
 CMD ["sh", "-c", "mage start $MAGE_PROJECT_NAME"]
