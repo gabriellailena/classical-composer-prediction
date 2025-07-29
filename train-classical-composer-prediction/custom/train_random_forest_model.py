@@ -55,7 +55,7 @@ def evaluate_random_forest_model(model: RandomForestClassifier, test_df: pd.Data
 
 
 @custom
-def train_random_forest_clf(*args, **kwargs) -> dict:
+def train_random_forest_model(*args, **kwargs) -> dict:
     """
     Train a Random Forest Classifier with hyperparameter optimization using RandomizedSearchCV.
 
@@ -107,7 +107,7 @@ def train_random_forest_clf(*args, **kwargs) -> dict:
         
         # Setup cross-validation
         n_splits = 10
-        n_iters = 150
+        n_iters = 200
         cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
 
         # Setup RandomizedSearchCV
@@ -149,7 +149,7 @@ def train_random_forest_clf(*args, **kwargs) -> dict:
         # Log the best model
         mlflow.sklearn.log_model(
             best_model, 
-            "models",
+            name="models",
             signature=mlflow.models.infer_signature(X_train, y_train)
         )
 
@@ -158,13 +158,13 @@ def train_random_forest_clf(*args, **kwargs) -> dict:
         # Evaluate the model on test set
         evaluate_random_forest_model(best_model, test_df, target_column)
 
-        # Return optimized results and test dataframe for further evaluation
-        return {
-            'best_model': best_model,
-            'best_params': random_search.best_params_,
-            'best_cv_score': random_search.best_score_,
-            'test_data': test_df,
-        }
+    # Return optimized results and test dataframe for further evaluation
+    return {
+        'best_model': best_model,
+        'best_params': random_search.best_params_,
+        'best_cv_score': random_search.best_score_,
+        'test_data': test_df,
+    }
 
 
 @test

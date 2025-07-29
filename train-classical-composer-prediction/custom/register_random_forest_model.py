@@ -25,32 +25,26 @@ def register_random_forest_model(*args, **kwargs):
         [experiment.experiment_id], order_by=["metrics.test_f1_weighted DESC"]
     )
     best_run_id = best_run.loc[0, 'run_id']
+    print(f"Best run_id: {best_run_id}")
 
     model_details = mlflow.register_model(
         model_uri=f"runs:/{best_run_id}/models", name="BestRandomForestModel"
     )
     print(f"Model registered successfully: {model_details.name} with version {model_details.version}")
     
-    # Set to production stage
-    mlflow.transition_model_version_stage(
-        name=model_details.name,
-        version=model_details.version,
-        stage="Production",
-        archive_existing_versions=True
-    )
-    print(f"Model {model_details.name} version {model_details.version} transitioned to Production stage.")
-    
     return {
         "model_name": model_details.name,
         "model_version": model_details.version
     }
-    
+
 
 @test
 def test_output(output, *args) -> None:
     """
     Template code for testing the output of the block.
     """
+    # Global variable to store the model
+
     assert output is not None, 'The output is undefined'
     assert "model_name" in output, "Output should contain 'model_name'"
     assert "model_version" in output, "Output should contain 'model_version'"

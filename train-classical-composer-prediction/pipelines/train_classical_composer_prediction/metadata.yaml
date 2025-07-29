@@ -21,38 +21,38 @@ blocks:
     file_source:
       path: transformers/extract_audio_features.py
   downstream_blocks:
-  - train_random_forest_clf
+  - train_random_forest_model
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
   name: extract_audio_features
   retry_config: null
-  status: updated
+  status: executed
   timeout: null
   type: transformer
   upstream_blocks:
   - load_musicnet_data
   uuid: extract_audio_features
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   color: teal
   configuration:
     file_source:
-      path: custom/train_random_forest_clf.py
+      path: custom/train_random_forest_model.py
   downstream_blocks:
   - register_random_forest_model
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
-  name: train_random_forest_clf
+  name: train_random_forest_model
   retry_config: null
-  status: failed
+  status: updated
   timeout: null
   type: custom
   upstream_blocks:
   - extract_audio_features
-  uuid: train_random_forest_clf
+  uuid: train_random_forest_model
 - all_upstream_blocks_executed: false
   color: yellow
   configuration:
@@ -70,7 +70,7 @@ blocks:
   timeout: null
   type: custom
   upstream_blocks:
-  - train_random_forest_clf
+  - train_random_forest_model
   uuid: register_random_forest_model
 cache_block_output_in_memory: false
 callbacks: []
