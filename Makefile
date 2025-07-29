@@ -32,6 +32,11 @@ up:
 	@echo "Starting Docker containers for all services..."
 	docker compose up
 
+# Build Docker containers for all services
+build:
+	@echo "Building Docker containers for all services..."
+	docker compose build
+
 # Stops Docker containers for all services
 down:
 	@echo "Stopping Docker containers for all services..."

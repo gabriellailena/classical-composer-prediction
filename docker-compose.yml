@@ -41,6 +41,9 @@ services:
     volumes:
       - ./mlruns:/mlruns
       - ./mlflow-artifacts:/mlflow-artifacts
+      - ./data:/data
+    env_file:
+      - .env
     depends_on:
       - mage
       - mlflow

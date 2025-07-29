@@ -17,9 +17,7 @@ if "test" not in globals():
 load_dotenv()
 
 mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", None))
-mlflow.set_experiment(
-    os.getenv("MLFLOW_EXPERIMENT_NAME", None)
-)
+mlflow.set_experiment(os.getenv("MLFLOW_EXPERIMENT_NAME", None))
 
 
 def extract_features(
@@ -152,7 +150,12 @@ def extract_features_batch(df: pd.DataFrame) -> pd.DataFrame:
     """
     feature_list = []
 
-    params = {"sample_rate": 22050, "duration": 30, "offset": 0, "n_mfcc": 13}
+    params = {
+        "sample_rate": os.getenv("AUDIO_SAMPLE_RATE", 22050),
+        "duration": os.getenv("AUDIO_DURATION", 30),
+        "offset": os.getenv("AUDIO_OFFSET", 0.0),
+        "n_mfcc": os.getenv("N_MFCC", 13),
+    }
     with mlflow.start_run(run_name="rf_feature_extraction"):
         mlflow.log_param("sample_rate", params["sample_rate"])
         mlflow.log_param("duration", params["duration"])
@@ -175,7 +178,11 @@ def extract_features_batch(df: pd.DataFrame) -> pd.DataFrame:
                 print(f"Skipping file {row['id']} with unknown split: {dataset_type}")
                 continue
             features = extract_features(
-                audio_path, sample_rate=22050, duration=30, offset=0, n_mfcc=13
+                audio_path,
+                sample_rate=os.getenv("AUDIO_SAMPLE_RATE", 22050),
+                duration=os.getenv("AUDIO_DURATION", 30),
+                offset=os.getenv("AUDIO_OFFSET", 0.0),
+                n_mfcc=os.getenv("N_MFCC", 13),
             )
 
             if features:

@@ -3,7 +3,7 @@ FROM mageai/mageai:latest
 WORKDIR /home/src
 
 # Copy the entire project directory
-COPY classical-composer-prediction/ ./classical-composer-prediction/
+COPY train-classical-composer-prediction/ ./train-classical-composer-prediction/
 COPY requirements.mage.txt .
 COPY .env .
 

@@ -1,7 +1,6 @@
-numpy
-pandas
-python-dotenv
-ruff
-mlflow
-Flask
-scikit-learn==1.7.0
+librosa==0.11.0
+numpy==1.26.4
+pandas==2.2.2
+python-dotenv==1.0.1
+mlflow==2.13.0
+scikit-learn==1.7.1
