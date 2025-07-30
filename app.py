@@ -1,5 +1,7 @@
 import os
-from flask import Flask, request, jsonify
+import hashlib
+import json
+from flask import Flask, request, jsonify, send_from_directory, render_template
 import pandas as pd
 from datetime import datetime
 import logging
@@ -26,12 +28,35 @@ ALLOWED_EXTENSIONS = {"wav", "mp3"}
 UPLOAD_PATH = "/data/uploads/"
 os.makedirs(UPLOAD_PATH, exist_ok=True)
 
+PREDICTION_LOG_PATH = "/data/predictions/"
+os.makedirs(PREDICTION_LOG_PATH, exist_ok=True)
+
 # Load model on startup
 model_name = os.getenv("MODEL_NAME", "composer_prediction_model")
 model_version = os.getenv("MODEL_VERSION", "1")
 
 model_cls = ComposerPredictionModel(model_name, model_version)
 model = model_cls.load_model()
+
+
+def string_to_code(s):
+    """
+    Convert a string to a 4-digit code with 'prod' prefix using SHA256 hash. This is used to ensure uploaded files have unique identifiers.
+    The code is zero-padded to always be 4 digits.
+    """
+    hash_object = hashlib.sha256(s.encode())
+    hash_int = int(hash_object.hexdigest(), 16)
+
+    # Take modulo 10000 to get a 4-digit number (0–9999)
+    code = hash_int % 10000
+
+    return f"prod-{code:04d}"
+
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    logger.info("Rendering index page...")
+    return render_template("index.html")
 
 
 @app.route("/health", methods=["GET"])
@@ -57,6 +82,7 @@ def predict():
     if model is None:
         return jsonify({"error": "Model not loaded"}), 500
 
+    # Handle single file uploads
     if "audio_file" in request.files:
         file = request.files["audio_file"]
         if file.filename == "":
@@ -82,7 +108,9 @@ def predict():
             return jsonify({"error": "Empty file uploaded"}), 400
 
         # Reset stream and save
-        file_path = os.path.join(UPLOAD_PATH, file.filename)
+        file_ext = file.filename.split(".")[-1].lower()
+        file_id = string_to_code(file.filename.split(".")[0])  # Generate unique ID
+        file_path = os.path.join(UPLOAD_PATH, file_id + "." + file_ext)
         file.stream.seek(0)
         file.save(file_path)
 
@@ -93,15 +121,41 @@ def predict():
             predictions = model_cls.predict(pd.DataFrame([features]))
 
             response = {
-                "predictions": predictions.tolist(),
+                "status": "success",
+                "file_id": file_id,
+                "file_extension": file_ext,
+                "file_name": file.filename,
+                "composer": predictions.tolist()[0],
                 "timestamp": datetime.now().isoformat(),
             }
+
+            # Log the prediction
+            log_file_path = os.path.join(PREDICTION_LOG_PATH, f"{file_id}.json")
+            with open(log_file_path, "w") as log_file:
+                json.dump(response, log_file)
 
             return jsonify(response)
 
         except Exception as e:
             logger.error(f"Prediction error: {str(e)}")
             return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
+
+    # Handle batch predictions
+    elif "features" in request.json:
+        features = request.json.get("features", [])
+        file_ids = request.json.get("file_ids", [])
+
+        if not isinstance(features, list):
+            return jsonify({"error": "Features must be a list"}), 400
+
+        predictions = model_cls.predict(pd.DataFrame(features))
+
+        # Pair each file_id with a prediction
+        results = []
+        for fid, pred in zip(file_ids, predictions):
+            results.append({"file_id": fid, "composer": pred})
+
+        return jsonify({"status": "success", "results": results})
 
     return jsonify({"error": "Failed to parse request"}), 500
 
@@ -130,6 +184,13 @@ def model_info():
 
     logger.info("Returning model info")
     return jsonify(info)
+
+
+@app.route("/monitoring/report", methods=["GET"])
+def get_evidently_report():
+    report_dir = "/data/reports"
+    report_filename = sorted(os.listdir(report_dir))[-1]  # latest report
+    return send_from_directory(report_dir, report_filename)
 
 
 if __name__ == "__main__":
