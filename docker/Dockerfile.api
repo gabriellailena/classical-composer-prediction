@@ -18,6 +18,7 @@ RUN pip install --upgrade pip setuptools wheel \
 
 # Copy application code
 COPY app.py .
+COPY model.py .
 COPY .env .
 
 # Expose port
