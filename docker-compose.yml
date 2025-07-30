@@ -6,8 +6,8 @@ services:
     ports:
       - "6789:6789"
     volumes:
-      - ./train-classical-composer-prediction:/home/src/train-classical-composer-prediction
-      - ./data:/home/src/data
+      - ./train-classical-composer-prediction:/train-classical-composer-prediction
+      - ./data:/data
       - ./mlflow-artifacts:/mlflow-artifacts
     env_file:
       - .env
@@ -39,6 +39,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
+      - ./templates:/templates
       - ./mlruns:/mlruns
       - ./mlflow-artifacts:/mlflow-artifacts
       - ./data:/data

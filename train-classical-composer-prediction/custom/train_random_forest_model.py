@@ -66,8 +66,8 @@ def train_random_forest_model(*args, **kwargs) -> dict:
     Returns:
         Dictionary containing the best model and results
     """
-    train_df = args[0][0]
-    test_df = args[0][1]
+    train_df = args[0].get("train")
+    test_df = args[0].get("test")
     target_column = "composer"
 
     # Ensure the target column exists

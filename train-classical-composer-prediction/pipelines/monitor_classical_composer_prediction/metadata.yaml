@@ -1,14 +1,34 @@
 blocks:
 - all_upstream_blocks_executed: true
   color: null
-  configuration: {}
+  configuration:
+    file_source:
+      path: data_loaders/load_uploaded_data.py
+  downstream_blocks:
+  - extract_uploaded_audio_features
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: load_uploaded_data
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_loader
+  upstream_blocks: []
+  uuid: load_uploaded_data
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
+      path: data_loaders/load_musicnet_data.py
   downstream_blocks:
   - extract_audio_features
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
-  name: load-musicnet-data
+  name: load_musicnet_data
   retry_config: null
   status: executed
   timeout: null
@@ -19,72 +39,71 @@ blocks:
   color: null
   configuration:
     file_source:
+      path: transformers/extract_uploaded_audio_features.py
+  downstream_blocks:
+  - predict
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: extract_uploaded_audio_features
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - load_uploaded_data
+  uuid: extract_uploaded_audio_features
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    file_source:
       path: transformers/extract_audio_features.py
   downstream_blocks:
-  - train_random_forest_model
+  - predict
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
   name: extract_audio_features
   retry_config: null
-  status: updated
+  status: executed
   timeout: null
   type: transformer
   upstream_blocks:
   - load_musicnet_data
   uuid: extract_audio_features
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   color: teal
   configuration:
     file_source:
-      path: custom/train_random_forest_model.py
-  downstream_blocks:
-  - register_random_forest_model
-  executor_config: null
-  executor_type: local_python
-  has_callback: false
-  language: python
-  name: train_random_forest_model
-  retry_config: null
-  status: updated
-  timeout: null
-  type: custom
-  upstream_blocks:
-  - extract_audio_features
-  uuid: train_random_forest_model
-- all_upstream_blocks_executed: false
-  color: yellow
-  configuration:
-    file_path: custom/register_random_forest_model.py
-    file_source:
-      path: custom/register_random_forest_model.py
+      path: custom/predict.py
   downstream_blocks: []
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
-  name: register_random_forest_model
+  name: predict
   retry_config: null
-  status: updated
+  status: executed
   timeout: null
   type: custom
   upstream_blocks:
-  - train_random_forest_model
-  uuid: register_random_forest_model
+  - extract_audio_features
+  - extract_uploaded_audio_features
+  uuid: predict
 cache_block_output_in_memory: false
 callbacks: []
 concurrency_config: {}
 conditionals: []
-created_at: '2025-07-13 16:01:39.890404+00:00'
+created_at: '2025-07-30 08:50:58.056597+00:00'
 data_integration: null
-description: Pipeline to read MusicNet dataset and train a classification model for
-  prediction the composer.
+description: Pipeline to monitor metrics of the deployed model.
 executor_config: {}
 executor_count: 1
 executor_type: null
 extensions: {}
-name: train-classical-composer-prediction
+name: monitor_classical_composer_prediction
 notification_config: {}
 remote_variables_dir: null
 retry_config: {}
@@ -94,6 +113,6 @@ settings:
 spark_config: {}
 tags: []
 type: python
-uuid: train_classical_composer_prediction
+uuid: monitor_classical_composer_prediction
 variables_dir: /home/src/mage_data/train-classical-composer-prediction
 widgets: []

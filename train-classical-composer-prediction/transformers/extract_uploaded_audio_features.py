@@ -12,13 +12,7 @@ if "transformer" not in globals():
 if "test" not in globals():
     from mage_ai.data_preparation.decorators import test
 
-
-# Configure MLflow tracking
 load_dotenv()
-
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", None))
-mlflow.set_experiment(os.getenv("MLFLOW_EXPERIMENT_NAME", None))
-
 
 def extract_features(
     audio_path: str,
@@ -156,51 +150,36 @@ def extract_features_batch(df: pd.DataFrame) -> pd.DataFrame:
         "offset": float(os.getenv("AUDIO_OFFSET", 0.0)),
         "n_mfcc": int(os.getenv("N_MFCC", 13)),
     }
-    with mlflow.start_run(run_name="rf_feature_extraction"):
-        mlflow.log_param("sample_rate", params["sample_rate"])
-        mlflow.log_param("duration", params["duration"])
-        mlflow.log_param("offset", params["offset"])
-        mlflow.log_param("n_mfcc", params["n_mfcc"])
+   
+    print(f"Extracting features from {len(df)} audio files...")
 
-        print(f"Extracting features from {len(df)} audio files...")
+    for idx, row in tqdm(df.iterrows()):
+        audio_path = os.path.join(
+            "data", "uploads", f"{row['id']}.{row['extension']}"
+        )
 
-        for idx, row in tqdm(df.iterrows()):
-            dataset_type = row["split"]
-            if dataset_type == "train":
-                audio_path = os.path.join(
-                    "data", "raw", "musicnet", "train_data", f"{row['id']}.wav"
-                )
-            elif dataset_type == "test":
-                audio_path = os.path.join(
-                    "data", "raw", "musicnet", "test_data", f"{row['id']}.wav"
-                )
-            else:
-                print(f"Skipping file {row['id']} with unknown split: {dataset_type}")
-                continue
-            features = extract_features(
-                audio_path,
-                sample_rate=params["sample_rate"],
-                duration=params["duration"],
-                offset=params["offset"],
-                n_mfcc=params["n_mfcc"],
-            )
+        features = extract_features(
+            audio_path,
+            sample_rate=params["sample_rate"],
+            duration=params["duration"],
+            offset=params["offset"],
+            n_mfcc=params["n_mfcc"],
+        )
 
-            if features:
-                # Add metadata
-                features["split"] = dataset_type
-                features["file_id"] = row.get("id", None)
-                features["composer"] = row.get("composer", "Unknown")
+        if features:
+            # Add metadata
+            features["file_id"] = row.get("id", None)
 
-                feature_list.append(features)
+            feature_list.append(features)
 
-        feature_df = pd.DataFrame(feature_list)
-        print(f"Feature extraction complete. Shape: {feature_df.shape}")
+    feature_df = pd.DataFrame(feature_list)
+    print(f"Feature extraction complete. Shape: {feature_df.shape}")
 
-        return feature_df
+    return feature_df
 
 
 @transformer
-def extract_audio_features(df: pd.DataFrame) -> pd.DataFrame:
+def extract_uploaded_audio_features(df: pd.DataFrame) -> pd.DataFrame:
     """
     Extract audio features from a DataFrame containing audio metadata.
 
@@ -211,10 +190,8 @@ def extract_audio_features(df: pd.DataFrame) -> pd.DataFrame:
         DataFrame with extracted features
     """
     features = extract_features_batch(df)
-    train_df = features.loc[features["split"] == "train"]
-    test_df = features.loc[features["split"] == "test"]
 
-    return {"train": train_df, "test": test_df}
+    return {"prod": features}
 
 
 @test
@@ -226,7 +203,5 @@ def test_output(output: pd.DataFrame, *args) -> None:
         output: DataFrame with extracted features
     """
     assert isinstance(output, dict), "Output should be a dictionary"
-    assert isinstance(output.get("train"), pd.DataFrame), "Features must be a pandas DataFrame"
-    assert "file_id" in output.get("train").columns, "Output DataFrame must contain file_id column"
-    assert "composer" in output.get("train").columns, "Output DataFrame must contain composer column"
-    print("Test passed: Output DataFrame is valid.")
+    assert isinstance(output.get("prod"), pd.DataFrame), "Features should be a pandas DataFrame"
+    print("Test passed: Output is valid.")
