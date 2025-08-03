@@ -1,5 +1,6 @@
 services:
   mage:
+    image: ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/docker-repo/mage:${VERSION:-latest}
     build: 
       context: .
       dockerfile: docker/Dockerfile.mage
@@ -17,7 +18,10 @@ services:
       - shared-network
 
   mlflow:
-    image: ghcr.io/mlflow/mlflow:latest
+    image: ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/docker-repo/mlflow:${VERSION:-latest}
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mlflow
     ports:
       - "5000:5000"
     volumes:
@@ -33,6 +37,7 @@ services:
       - shared-network
 
   api:
+    image: ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/docker-repo/api:${VERSION:-latest}
     build:
       context: .
       dockerfile: docker/Dockerfile.api

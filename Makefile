@@ -7,6 +7,11 @@ ifneq (,$(wildcard .env))
 endif
 MLFLOW_BACKEND_URI ?= sqlite:///mlflow.db
 MAGE_PROJECT_NAME ?= train-classical-composer-prediction
+USERNAME ?= user
+SERVICE ?= api
+VERSION ?= v0.0.1
+GCP_PROJECT_ID ?= gcp-project-id
+GCP_REGION ?= europe-central2
 
 setup-venv:
 	@echo "Setting up virtual environment..."
@@ -42,21 +47,6 @@ down:
 	@echo "Stopping Docker containers for all services..."
 	docker compose down
 
-# Runs all servers
-run-servers:
-	@echo "Starting all servers..."
-	. $(VENV)/bin/activate && \
-	mlflow ui --backend-store-uri $(MLFLOW_BACKEND_URI) --default-artifact-root $(PWD)/artifacts & \
-	mage start $(MAGE_PROJECT_NAME) & \
-	python app.py
-
-# Stops all servers
-stop-servers:
-	@echo "Stopping all servers..."
-	@kill $(shell lsof -t -i:6789) 2>/dev/null || true  # Mage AI default port
-	@kill $(shell lsof -t -i:5000) 2>/dev/null || true  # MLFlow default port
-	@kill $(shell lsof -t -i:8000) 2>/dev/null || true  # API default port
-
 # Deploys the Flask App with gunicorn
 deploy:
 	@echo "Deploying Flask App..."
@@ -68,3 +58,36 @@ lint:
 	@. $(VENV)/bin/activate && ruff check --fix .
 	@. $(VENV)/bin/activate && ruff format .
 
+# Setup Google Cloud authentication for Docker
+# NOTE: Run this once before using push-gcp commands
+setup-gcp-auth:
+	@echo "Setting up Google Cloud authentication..."
+	gcloud auth login --no-launch-browser
+	gcloud config set project $(GCP_PROJECT_ID)
+	gcloud auth configure-docker
+	gcloud auth configure-docker $(GCP_REGION)-docker.pkg.dev
+
+# Build and push all services to the image destination defined in docker-compose.yml
+# NOTE: Need to run setup-gcp-auth first
+push-all:
+	@echo "Building and pushing all services..."
+	docker compose build
+	docker compose push
+	@echo "All services pushed successfully!"
+
+# Push docker image to Google Cloud
+# Usage: make push-gcp SERVICE=api USERNAME=myusername VERSION=v0.0.1 GCP_PROJECT_ID=my-project
+# NOTE: Need to run setup-gcp-auth first and ensure image exists in GitHub Container Registry
+push-gcp:
+	@echo "Pushing to Google Cloud..."
+	@echo "Service: $(SERVICE), Username: $(USERNAME), Version: $(VERSION), Project: $(GCP_PROJECT_ID)"
+	
+	# Tag for Google Cloud Artifact Registry
+	docker tag ghcr.io/$(USERNAME)/$(SERVICE):latest $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT_ID)/docker-repo/$(SERVICE):latest
+	docker tag ghcr.io/$(USERNAME)/$(SERVICE):$(VERSION) $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT_ID)/docker-repo/$(SERVICE):$(VERSION)
+	
+	# Push to Google Cloud
+	docker push $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT_ID)/docker-repo/$(SERVICE):latest
+	docker push $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT_ID)/docker-repo/$(SERVICE):$(VERSION)
+	
+	@echo "Successfully pushed $(SERVICE) to Google Cloud!"
