@@ -8,6 +8,7 @@ import logging
 from dotenv import load_dotenv
 
 from model import ComposerPredictionModel
+from werkzeug.exceptions import RequestEntityTooLarge
 
 # Load environment variables from .env file
 load_dotenv()
@@ -26,10 +27,7 @@ app.logger.setLevel(logging.INFO)
 app.config["MAX_CONTENT_LENGTH"] = 60 * 1024 * 1024  # 60MB max file size
 ALLOWED_EXTENSIONS = {"wav", "mp3"}
 UPLOAD_PATH = "/data/uploads/"
-os.makedirs(UPLOAD_PATH, exist_ok=True)
-
 PREDICTION_LOG_PATH = "/data/predictions/"
-os.makedirs(PREDICTION_LOG_PATH, exist_ok=True)
 
 # Load model on startup
 model_name = os.getenv("MODEL_NAME", "composer_prediction_model")
@@ -52,6 +50,37 @@ def string_to_code(s):
 
     return f"prod-{code:04d}"
 
+
+def log_prediction_response(file_id, response):
+    """
+    Log the prediction response to a file.
+    """
+    os.makedirs(PREDICTION_LOG_PATH, exist_ok=True)
+    log_file_path = os.path.join(PREDICTION_LOG_PATH, f"{file_id}.json")
+    with open(log_file_path, "w") as log_file:
+        json.dump(response, log_file)
+
+    logger.info(f"Logged prediction response to {log_file_path}")
+
+
+def save_uploaded_file(file):
+    """
+    Save the uploaded file to the upload directory and return its path.
+    """
+    file_ext = file.filename.split(".")[-1].lower()
+    file_id = string_to_code(file.filename.split(".")[0])  # Generate unique ID
+
+    os.makedirs(UPLOAD_PATH, exist_ok=True)
+    file_path = os.path.join(UPLOAD_PATH, file_id + "." + file_ext)
+    file.stream.seek(0)
+    file.save(file_path)
+
+    logger.info(f"Saved uploaded file to {file_path}")
+    return file_path, file_id, file_ext
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_file_too_large(e):
+    return jsonify({"error": "File size exceeds the maximum limit"}), 413
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -97,22 +126,16 @@ def predict():
 
         # Check file size
         file_bytes = file.read()
+        logger.info(f"Uploaded file size: {len(file_bytes)} bytes")
         if len(file_bytes) > app.config["MAX_CONTENT_LENGTH"]:
             return jsonify({"error": "File size exceeds the maximum limit"}), 413
-
-        # Read and inspect file content before saving
-        logger.info(f"Uploaded file size: {len(file_bytes)} bytes")
 
         if len(file_bytes) == 0:
             logger.error("Uploaded file is empty!")
             return jsonify({"error": "Empty file uploaded"}), 400
 
-        # Reset stream and save
-        file_ext = file.filename.split(".")[-1].lower()
-        file_id = string_to_code(file.filename.split(".")[0])  # Generate unique ID
-        file_path = os.path.join(UPLOAD_PATH, file_id + "." + file_ext)
-        file.stream.seek(0)
-        file.save(file_path)
+        # Save the uploaded file
+        file_path, file_id, file_ext = save_uploaded_file(file)
 
         # Extract features from the uploaded audio file
         try:
@@ -130,9 +153,7 @@ def predict():
             }
 
             # Log the prediction
-            log_file_path = os.path.join(PREDICTION_LOG_PATH, f"{file_id}.json")
-            with open(log_file_path, "w") as log_file:
-                json.dump(response, log_file)
+            log_prediction_response(file_id, response)
 
             return jsonify(response)
 
