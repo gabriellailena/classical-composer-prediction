@@ -1,8 +1,6 @@
 import io
-import json
-import pytest
 import numpy as np
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from flask import Response
 
 def test_health_check(client):
