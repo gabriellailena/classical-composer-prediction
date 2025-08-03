@@ -91,3 +91,8 @@ push-gcp:
 	docker push $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT_ID)/docker-repo/$(SERVICE):$(VERSION)
 	
 	@echo "Successfully pushed $(SERVICE) to Google Cloud!"
+
+# Runs tests in the specified environment
+test:
+	@echo "Running tests..."
+	. $(VENV)/bin/activate && pytest -v
