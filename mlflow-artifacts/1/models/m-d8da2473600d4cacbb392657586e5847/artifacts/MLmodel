@@ -1,0 +1,118 @@
+artifact_path: file:///mlflow-artifacts/1/models/m-d8da2473600d4cacbb392657586e5847/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.10.18
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.0
+is_signature_from_type_hint: false
+mlflow_version: 3.1.1
+model_id: m-d8da2473600d4cacbb392657586e5847
+model_size_bytes: 3121975
+model_uuid: m-d8da2473600d4cacbb392657586e5847
+prompts: null
+run_id: fd847a6fbc1c4ffa8754304764dc5eec
+signature:
+  inputs: '[{"type": "float", "name": "mfcc_0_mean", "required": true}, {"type": "float",
+    "name": "mfcc_0_std", "required": true}, {"type": "float", "name": "mfcc_0_max",
+    "required": true}, {"type": "float", "name": "mfcc_0_min", "required": true},
+    {"type": "float", "name": "mfcc_1_mean", "required": true}, {"type": "float",
+    "name": "mfcc_1_std", "required": true}, {"type": "float", "name": "mfcc_1_max",
+    "required": true}, {"type": "float", "name": "mfcc_1_min", "required": true},
+    {"type": "float", "name": "mfcc_2_mean", "required": true}, {"type": "float",
+    "name": "mfcc_2_std", "required": true}, {"type": "float", "name": "mfcc_2_max",
+    "required": true}, {"type": "float", "name": "mfcc_2_min", "required": true},
+    {"type": "float", "name": "mfcc_3_mean", "required": true}, {"type": "float",
+    "name": "mfcc_3_std", "required": true}, {"type": "float", "name": "mfcc_3_max",
+    "required": true}, {"type": "float", "name": "mfcc_3_min", "required": true},
+    {"type": "float", "name": "mfcc_4_mean", "required": true}, {"type": "float",
+    "name": "mfcc_4_std", "required": true}, {"type": "float", "name": "mfcc_4_max",
+    "required": true}, {"type": "float", "name": "mfcc_4_min", "required": true},
+    {"type": "float", "name": "mfcc_5_mean", "required": true}, {"type": "float",
+    "name": "mfcc_5_std", "required": true}, {"type": "float", "name": "mfcc_5_max",
+    "required": true}, {"type": "float", "name": "mfcc_5_min", "required": true},
+    {"type": "float", "name": "mfcc_6_mean", "required": true}, {"type": "float",
+    "name": "mfcc_6_std", "required": true}, {"type": "float", "name": "mfcc_6_max",
+    "required": true}, {"type": "float", "name": "mfcc_6_min", "required": true},
+    {"type": "float", "name": "mfcc_7_mean", "required": true}, {"type": "float",
+    "name": "mfcc_7_std", "required": true}, {"type": "float", "name": "mfcc_7_max",
+    "required": true}, {"type": "float", "name": "mfcc_7_min", "required": true},
+    {"type": "float", "name": "mfcc_8_mean", "required": true}, {"type": "float",
+    "name": "mfcc_8_std", "required": true}, {"type": "float", "name": "mfcc_8_max",
+    "required": true}, {"type": "float", "name": "mfcc_8_min", "required": true},
+    {"type": "float", "name": "mfcc_9_mean", "required": true}, {"type": "float",
+    "name": "mfcc_9_std", "required": true}, {"type": "float", "name": "mfcc_9_max",
+    "required": true}, {"type": "float", "name": "mfcc_9_min", "required": true},
+    {"type": "float", "name": "mfcc_10_mean", "required": true}, {"type": "float",
+    "name": "mfcc_10_std", "required": true}, {"type": "float", "name": "mfcc_10_max",
+    "required": true}, {"type": "float", "name": "mfcc_10_min", "required": true},
+    {"type": "float", "name": "mfcc_11_mean", "required": true}, {"type": "float",
+    "name": "mfcc_11_std", "required": true}, {"type": "float", "name": "mfcc_11_max",
+    "required": true}, {"type": "float", "name": "mfcc_11_min", "required": true},
+    {"type": "float", "name": "mfcc_12_mean", "required": true}, {"type": "float",
+    "name": "mfcc_12_std", "required": true}, {"type": "float", "name": "mfcc_12_max",
+    "required": true}, {"type": "float", "name": "mfcc_12_min", "required": true},
+    {"type": "double", "name": "spectral_centroid_mean", "required": true}, {"type":
+    "double", "name": "spectral_centroid_std", "required": true}, {"type": "double",
+    "name": "spectral_rolloff_mean", "required": true}, {"type": "double", "name":
+    "spectral_rolloff_std", "required": true}, {"type": "double", "name": "spectral_bandwidth_mean",
+    "required": true}, {"type": "double", "name": "spectral_bandwidth_std", "required":
+    true}, {"type": "double", "name": "zcr_mean", "required": true}, {"type": "double",
+    "name": "zcr_std", "required": true}, {"type": "double", "name": "harmonic_percussive_ratio",
+    "required": true}, {"type": "double", "name": "tempo", "required": true}, {"type":
+    "double", "name": "beat_consistency", "required": true}, {"type": "float", "name":
+    "chroma_0_mean", "required": true}, {"type": "float", "name": "chroma_0_std",
+    "required": true}, {"type": "float", "name": "chroma_1_mean", "required": true},
+    {"type": "float", "name": "chroma_1_std", "required": true}, {"type": "float",
+    "name": "chroma_2_mean", "required": true}, {"type": "float", "name": "chroma_2_std",
+    "required": true}, {"type": "float", "name": "chroma_3_mean", "required": true},
+    {"type": "float", "name": "chroma_3_std", "required": true}, {"type": "float",
+    "name": "chroma_4_mean", "required": true}, {"type": "float", "name": "chroma_4_std",
+    "required": true}, {"type": "float", "name": "chroma_5_mean", "required": true},
+    {"type": "float", "name": "chroma_5_std", "required": true}, {"type": "float",
+    "name": "chroma_6_mean", "required": true}, {"type": "float", "name": "chroma_6_std",
+    "required": true}, {"type": "float", "name": "chroma_7_mean", "required": true},
+    {"type": "float", "name": "chroma_7_std", "required": true}, {"type": "float",
+    "name": "chroma_8_mean", "required": true}, {"type": "float", "name": "chroma_8_std",
+    "required": true}, {"type": "float", "name": "chroma_9_mean", "required": true},
+    {"type": "float", "name": "chroma_9_std", "required": true}, {"type": "float",
+    "name": "chroma_10_mean", "required": true}, {"type": "float", "name": "chroma_10_std",
+    "required": true}, {"type": "float", "name": "chroma_11_mean", "required": true},
+    {"type": "float", "name": "chroma_11_std", "required": true}, {"type": "double",
+    "name": "tonnetz_0_mean", "required": true}, {"type": "double", "name": "tonnetz_0_std",
+    "required": true}, {"type": "double", "name": "tonnetz_1_mean", "required": true},
+    {"type": "double", "name": "tonnetz_1_std", "required": true}, {"type": "double",
+    "name": "tonnetz_2_mean", "required": true}, {"type": "double", "name": "tonnetz_2_std",
+    "required": true}, {"type": "double", "name": "tonnetz_3_mean", "required": true},
+    {"type": "double", "name": "tonnetz_3_std", "required": true}, {"type": "double",
+    "name": "tonnetz_4_mean", "required": true}, {"type": "double", "name": "tonnetz_4_std",
+    "required": true}, {"type": "double", "name": "tonnetz_5_mean", "required": true},
+    {"type": "double", "name": "tonnetz_5_std", "required": true}, {"type": "float",
+    "name": "rms_mean", "required": true}, {"type": "float", "name": "rms_std", "required":
+    true}, {"type": "float", "name": "rms_max", "required": true}, {"type": "float",
+    "name": "dynamic_range", "required": true}, {"type": "double", "name": "onset_rate",
+    "required": true}, {"type": "double", "name": "spectral_contrast_0_mean", "required":
+    true}, {"type": "double", "name": "spectral_contrast_0_std", "required": true},
+    {"type": "double", "name": "spectral_contrast_1_mean", "required": true}, {"type":
+    "double", "name": "spectral_contrast_1_std", "required": true}, {"type": "double",
+    "name": "spectral_contrast_2_mean", "required": true}, {"type": "double", "name":
+    "spectral_contrast_2_std", "required": true}, {"type": "double", "name": "spectral_contrast_3_mean",
+    "required": true}, {"type": "double", "name": "spectral_contrast_3_std", "required":
+    true}, {"type": "double", "name": "spectral_contrast_4_mean", "required": true},
+    {"type": "double", "name": "spectral_contrast_4_std", "required": true}, {"type":
+    "double", "name": "spectral_contrast_5_mean", "required": true}, {"type": "double",
+    "name": "spectral_contrast_5_std", "required": true}, {"type": "double", "name":
+    "spectral_contrast_6_mean", "required": true}, {"type": "double", "name": "spectral_contrast_6_std",
+    "required": true}]'
+  outputs: '[{"type": "string", "name": "composer", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-07-28 18:22:10.946896'

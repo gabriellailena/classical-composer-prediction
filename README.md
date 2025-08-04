@@ -73,9 +73,15 @@ There are 3 containerized services:
 
 The container images are pushed to Google Artifact Registry. To build all containers and push to Google Artifact Registry + Google Cloud Run, run `make deploy`.
 
+### Inference
+(Currently only possible when running containers locally)
+
+After running the containers locally with `make up`, you can access a very very simple web interface on `http://127.0.0.1:8000`. From this page, you can upload a .wav or .mp3 classical piano audio file and run the inference, to get the predicted composer.
+
 ## Remaining TODO
 Due to time constraints, there are still a few issues which needs to be fixed for this project:
 - After deploying, I realized that I still need to configure the service addresses so that the API service can fetch the model from MLFlow's Model Registry directly.
 - Probably, it is better to have the pipelines outside of the generated project directory from Mage for better visibility and unit testing, and then import the pipeline into Mage AI.
 - Also need to implement some integration tests apart from the unit tests.
+- Need to setup databases to store experiments and user-generated data.
 
