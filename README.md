@@ -1,16 +1,18 @@
 # Classical Composer Prediction
 
-This project is done as submission to the MLOpsZoomCamp 2025 cohort capstone project.
+This project is done as submission to the [MLOpsZoomCamp 2025 cohort](https://github.com/DataTalksClub/mlops-zoomcamp/tree/main/cohorts/2025) capstone project.
 
 
 ## Problem Statement
+![THTH](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3F3b25uZG0zNzBlanVjZnhvZzUyems1b2M5OGdqZTYwbHAxbGQxaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/RhxBbIhdT32VdUiXXo/giphy.gif)
+
 Music is one of the greatest gifts of mankind - it allows people to celebrate their cultures, beliefs, and lives in a universal way. 
 
 Classical music is one of the existing proofs, that music can stand the test of time and stay relevant decades after it was created. With a vast collection of musical pieces, automatic identification of classical composers can help ease the process of metadata generation, categorization, and archiving of digital data. In another use case, the classified/categorized data can be further use to group composers with similar styles, which can be useful for music recommendation systems.
 
 In this project, the aim is to build a RandomForestClassifier as an initial model to predict classical music composers based on some snippet of classical piano audio data. The training and validation data are in .wav format, but the unseen data can either be in .wav or .mp3 format. The librosa library is used to extract audio features from these files.
 
-The dataset used is from MusicNet, which is openly available.
+The dataset used is from [MusicNet](https://zenodo.org/records/5120004), which is openly available.
 
 ## Setting up the Local Environment
 Firstly, we need to ensure that Docker engine is running in the background. To do this, we can simply run Docker Desktop and ensure it is running. 
@@ -42,7 +44,7 @@ The MusicNet Dataset consists of already splitted `train` and `test` datasets. T
 The `musicnet_metadata.csv` is also used to get the file identifiers and composer labels.
 
 ## Classification Model
-To predict the composer, audio features are extracted from the audio files using the `librosa` library. Features include:
+To predict the composer, audio features are extracted from the audio files using the [librosa](https://librosa.org/doc/latest/index.html) library. Features include:
 - MFCCs
 - Spectral characteristics (centroid, rolloff, bandwidth)
 - Harmonic-percussive separation
